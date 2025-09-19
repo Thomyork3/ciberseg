@@ -1,19 +1,11 @@
 {
   "/_app": "pages/_app.js",
-  "/admin/dashboard": "pages/admin/dashboard.html",
-  "/api/admin/administradores/[username]": "pages/api/admin/administradores/[username].js",
-  "/api/admin/administradores": "pages/api/admin/administradores.js",
-  "/api/admin/profesores/[id]": "pages/api/admin/profesores/[id].js",
-  "/api/admin/profesores": "pages/api/admin/profesores.js",
-  "/api/auth/admin-login": "pages/api/auth/admin-login.js",
-  "/api/auth/login": "pages/api/auth/login.js",
-  "/api/auth/register": "pages/api/auth/register.js",
-  "/api/mi-info": "pages/api/mi-info.js",
-  "/dashboard": "pages/dashboard.html",
-  "/": "pages/index.html",
-  "/login": "pages/login.html",
-  "/register": "pages/register.html",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/404": "pages/404.html"
+  "/login": "pages/login.js",
+  "/api/auth/login": "pages/api/auth/login.js",
+  "/api/auth/admin-login": "pages/api/auth/admin-login.js",
+  "/admin/dashboard": "pages/admin/dashboard.js",
+  "/register": "pages/register.js",
+  "/api/auth/register": "pages/api/auth/register.js"
 }
