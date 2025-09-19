@@ -101,7 +101,7 @@
         "transform": "lodash/{{member}}"
       }
     },
-    "outputFileTracingRoot": "/home/alan/Escritorio/paginaciberseg-restaurado (1)/paginaciberseg",
+    "outputFileTracingRoot": "/home/alan/Escritorio/paginaciberseg",
     "experimental": {
       "useSkewCookie": false,
       "cacheLife": {
@@ -290,10 +290,10 @@
     "bundlePagesRouterDependencies": false,
     "configFileName": "next.config.js",
     "turbopack": {
-      "root": "/home/alan/Escritorio/paginaciberseg-restaurado (1)/paginaciberseg"
+      "root": "/home/alan/Escritorio/paginaciberseg"
     }
   },
-  "appDir": "/home/alan/Escritorio/paginaciberseg-restaurado (1)/paginaciberseg",
+  "appDir": "/home/alan/Escritorio/paginaciberseg",
   "relativeAppDir": "",
   "files": [
     ".next/routes-manifest.json",

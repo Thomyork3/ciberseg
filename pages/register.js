@@ -7,14 +7,17 @@ export default function RegisterPage() {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    nombre_completo: '',
+    correo: ''
   })
+
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
-  
+
   const router = useRouter()
 
   const handleChange = (e) => {
@@ -26,10 +29,11 @@ export default function RegisterPage() {
   }
 
   const validateForm = () => {
-    if (!formData.username || !formData.password || !formData.confirmPassword) {
+    if (!formData.username || !formData.password || !formData.confirmPassword || !formData.nombre_completo || !formData.correo) {
       setError('Todos los campos son requeridos')
       return false
     }
+
 
     if (formData.username.length < 3) {
       setError('El usuario debe tener al menos 3 caracteres')
@@ -67,8 +71,11 @@ export default function RegisterPage() {
         },
         body: JSON.stringify({
           username: formData.username,
-          password: formData.password
+          password: formData.password,
+          nombre_completo: formData.nombre_completo,
+          correo: formData.correo
         }),
+
       })
 
       const data = await response.json()
@@ -151,6 +158,49 @@ export default function RegisterPage() {
               <p className="mt-1 text-xs text-gray-500">
                 Mínimo 3 caracteres
               </p>
+            </div>
+            {/* Nombre Completo */}
+            <div>
+              <label htmlFor="nombre_completo" className="block text-sm font-medium text-gray-700 mb-1">
+                Nombre Completo
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="nombre_completo"
+                  name="nombre_completo"
+                  type="text"
+                  required
+                  value={formData.nombre_completo}
+                  onChange={handleChange}
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="Tu nombre completo"
+                />
+              </div>
+            </div>
+
+            {/* Correo */}
+            <div>
+              <label htmlFor="correo" className="block text-sm font-medium text-gray-700 mb-1">
+                Correo Electrónico
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="correo"
+                  name="correo"
+                  type="email"
+                  required
+                  value={formData.correo}
+                  onChange={handleChange}
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="tu@correo.com"
+                />
+              </div>
             </div>
 
             {/* Password */}
