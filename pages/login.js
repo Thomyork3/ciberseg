@@ -41,20 +41,31 @@ export default function LoginPage() {
 
       const data = await response.json()
 
+      
       if (response.ok) {
-        // Guardar token en localStorage
-        localStorage.setItem('token', data.access_token)
-        localStorage.setItem('user', JSON.stringify(data.user))
-        
-        // Redirigir según el rol
-        if (data.user.role === 'admin') {
-          router.push('/admin/dashboard')
-        } else {
-          router.push('/dashboard')
-        }
-      } else {
-        setError(data.error || 'Error al iniciar sesión')
-      }
+  console.log('=== DEBUG FRONTEND LOGIN ===')
+  console.log('Respuesta completa:', data)
+  console.log('Usuario:', data.user)
+  console.log('Rol del usuario:', data.user.role)
+  
+  // Guardar token en localStorage
+  localStorage.setItem('token', data.access_token)
+  localStorage.setItem('user', JSON.stringify(data.user))
+  
+  // Redirigir según el rol
+  if (data.user.role === 'admin') {
+    console.log('Redirigiendo a admin dashboard...')
+    router.push('/admin/dashboard')
+  } else {
+    console.log('Redirigiendo a dashboard normal...')
+    router.push('/dashboard')
+  }
+} else {
+  console.log('Error en respuesta:', data)
+  setError(data.error || 'Error al iniciar sesión')
+}
+
+    
     } catch {
       setError('Error de conexión. Intenta nuevamente.')
     } finally {

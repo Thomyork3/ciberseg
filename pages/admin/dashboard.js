@@ -1,12 +1,9 @@
-
 /* eslint-disable no-unused-vars */
 import { useState, useEffect} from 'react'
 import { useRouter } from 'next/router'
 
-
 import { 
   Users, 
-  UserPlus, 
   GraduationCap, 
   Settings, 
   LogOut, 
@@ -22,17 +19,15 @@ export default function AdminDashboard() {
   const [user, setUser] = useState(null)
   const [activeTab, setActiveTab] = useState('profesores')
   const [profesores, setProfesores] = useState([])
-  const [usuarios, setUsuarios] = useState([])
   const [administradores, setAdministradores] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [showModal, setShowModal] = useState(false)
-  const [modalType, setModalType] = useState('') // 'profesor', 'usuario', 'admin'
+  const [modalType, setModalType] = useState('') 
   const [editingItem, setEditingItem] = useState(null)
-  const [profesor, setProfesor] = useState(null)
-  
+
   const router = useRouter()
 
   const fetchData = async (token) => {
@@ -46,15 +41,6 @@ export default function AdminDashboard() {
       if (profesoresRes.ok) {
         const profesoresData = await profesoresRes.json()
         setProfesores(profesoresData)
-      }
-
-      // Fetch usuarios
-      const usuariosRes = await fetch('/api/admin/usuarios', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
-      if (usuariosRes.ok) {
-        const usuariosData = await usuariosRes.json()
-        setUsuarios(usuariosData)
       }
 
       // Fetch administradores
@@ -75,21 +61,20 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    const profesorData = localStorage.getItem('profesor')
+    const userData = localStorage.getItem('user')
 
-    if (!token || !profesorData) {
+    if (!token || !userData) {
       router.push('/login')
       return
     }
 
-    const parsedProfesor = JSON.parse(profesorData)
-    if (parsedProfesor.role !== 'admin') {
+    const parsedUser = JSON.parse(userData)
+    if (parsedUser.role !== 'admin') {
       router.push('/login')
       return
     }
 
-    setProfesor(parsedProfesor)
-    setUser(parsedProfesor)
+    setUser(parsedUser)
     fetchData(token)
   }, [router])
 
@@ -110,9 +95,6 @@ export default function AdminDashboard() {
     switch (type) {
       case 'profesor':
         endpoint = `/api/admin/profesores/${id}`
-        break
-      case 'usuario':
-        endpoint = `/api/admin/usuarios/${id}`
         break
       case 'admin':
         endpoint = `/api/admin/administradores/${id}`
@@ -152,10 +134,6 @@ export default function AdminDashboard() {
   const filteredProfesores = profesores.filter(profesor =>
     profesor.nombre_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
     profesor.correo.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
-  const filteredUsuarios = usuarios.filter(usuario =>
-    usuario.username.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const filteredAdministradores = administradores.filter(admin =>
@@ -213,23 +191,13 @@ export default function AdminDashboard() {
         )}
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <GraduationCap className="w-8 h-8 text-blue-600" />
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-500">Total Profesores</p>
                 <p className="text-2xl font-bold text-gray-900">{profesores.length}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <Users className="w-8 h-8 text-green-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Total Usuarios</p>
-                <p className="text-2xl font-bold text-gray-900">{usuarios.length}</p>
               </div>
             </div>
           </div>
@@ -258,16 +226,6 @@ export default function AdminDashboard() {
                 }`}
               >
                 Profesores
-              </button>
-              <button
-                onClick={() => setActiveTab('usuarios')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'usuarios'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Usuarios
               </button>
               <button
                 onClick={() => setActiveTab('administradores')}
@@ -305,7 +263,7 @@ export default function AdminDashboard() {
               </button>
             </div>
 
-            {/* Tables */}
+            {/* Profesores */}
             {activeTab === 'profesores' && (
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -316,12 +274,6 @@ export default function AdminDashboard() {
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Correo
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Categoría
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Grado
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Acciones
@@ -336,12 +288,6 @@ export default function AdminDashboard() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {profesor.correo}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {profesor.categoria}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {profesor.grado_academico}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <button
@@ -364,58 +310,7 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {activeTab === 'usuarios' && (
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Usuario
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Profesor ID
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Fecha Creación
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Acciones
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredUsuarios.map((usuario) => (
-                      <tr key={usuario.username}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {usuario.username}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {usuario.profesor_id || 'No asignado'}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {new Date(usuario.created_at).toLocaleDateString('es-ES')}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <button
-                            onClick={() => openModal('usuario', usuario)}
-                            className="text-blue-600 hover:text-blue-900 mr-3"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete('usuario', usuario.username)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-
+            {/* Administradores */}
             {activeTab === 'administradores' && (
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -465,7 +360,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Modal placeholder - would need to implement forms for each type */}
+      {/* Modal placeholder */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
@@ -487,4 +382,3 @@ export default function AdminDashboard() {
     </div>
   )
 }
-

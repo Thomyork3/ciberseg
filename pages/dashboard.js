@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { User, Mail, Phone, MapPin, Calendar, GraduationCap, LogOut, AlertCircle } from 'lucide-react'
+import { User, Mail, LogOut, AlertCircle } from 'lucide-react'
 
 export default function UserDashboard() {
   const [user, setUser] = useState(null)
@@ -45,7 +45,7 @@ export default function UserDashboard() {
     }
 
     const parsedUser = JSON.parse(userData)
-    if (parsedUser.role !== 'user') {
+    if (parsedUser.role !== 'profesor') {
       router.push('/login')
       return
     }
@@ -58,11 +58,6 @@ export default function UserDashboard() {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     router.push('/')
-  }
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'No especificado'
-    return new Date(dateString).toLocaleDateString('es-ES')
   }
 
   if (isLoading) {
@@ -97,7 +92,7 @@ export default function UserDashboard() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {error && (
           <div className="mb-6 flex items-center space-x-2 text-red-600 bg-red-50 p-4 rounded-lg">
             <AlertCircle className="h-5 w-5" />
@@ -117,122 +112,7 @@ export default function UserDashboard() {
                   <h2 className="text-2xl font-bold text-white">
                     {profesorInfo.nombre_completo}
                   </h2>
-                  <p className="text-blue-100">
-                    {profesorInfo.categoria} - {profesorInfo.grado_academico}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Profile Content */}
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Información Personal */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-                    Información Personal
-                  </h3>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center">
-                      <User className="w-5 h-5 text-gray-400 mr-3" />
-                      <div>
-                        <p className="text-sm text-gray-500">Género</p>
-                        <p className="font-medium">{profesorInfo.genero}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Mail className="w-5 h-5 text-gray-400 mr-3" />
-                      <div>
-                        <p className="text-sm text-gray-500">Correo Electrónico</p>
-                        <p className="font-medium">{profesorInfo.correo}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Phone className="w-5 h-5 text-gray-400 mr-3" />
-                      <div>
-                        <p className="text-sm text-gray-500">Teléfono Casa</p>
-                        <p className="font-medium">{profesorInfo.tel_casa || 'No especificado'}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Phone className="w-5 h-5 text-gray-400 mr-3" />
-                      <div>
-                        <p className="text-sm text-gray-500">Celular</p>
-                        <p className="font-medium">{profesorInfo.celular || 'No especificado'}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center">
-                      <MapPin className="w-5 h-5 text-gray-400 mr-3" />
-                      <div>
-                        <p className="text-sm text-gray-500">Dirección</p>
-                        <p className="font-medium">{profesorInfo.direccion || 'No especificada'}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Información Académica */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-                    Información Académica
-                  </h3>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center">
-                      <GraduationCap className="w-5 h-5 text-gray-400 mr-3" />
-                      <div>
-                        <p className="text-sm text-gray-500">Grado Académico</p>
-                        <p className="font-medium">{profesorInfo.grado_academico}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center">
-                      <User className="w-5 h-5 text-gray-400 mr-3" />
-                      <div>
-                        <p className="text-sm text-gray-500">Categoría</p>
-                        <p className="font-medium">{profesorInfo.categoria}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Calendar className="w-5 h-5 text-gray-400 mr-3" />
-                      <div>
-                        <p className="text-sm text-gray-500">Antigüedad en Carrera</p>
-                        <p className="font-medium">{formatDate(profesorInfo.antig_carrera)}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Calendar className="w-5 h-5 text-gray-400 mr-3" />
-                      <div>
-                        <p className="text-sm text-gray-500">Antigüedad en UNAM</p>
-                        <p className="font-medium">{formatDate(profesorInfo.antig_unam)}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Información Legal */}
-                <div className="space-y-4 md:col-span-2">
-                  <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
-                    Información Legal
-                  </h3>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-500">RFC</p>
-                      <p className="font-medium font-mono">{profesorInfo.rfc}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">CURP</p>
-                      <p className="font-medium font-mono">{profesorInfo.curp}</p>
-                    </div>
-                  </div>
+                  <p className="text-blue-100">{profesorInfo.correo}</p>
                 </div>
               </div>
             </div>
@@ -253,4 +133,3 @@ export default function UserDashboard() {
     </div>
   )
 }
-
