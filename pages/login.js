@@ -12,8 +12,46 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [loginType, setLoginType] = useState('user') // 'user' or 'admin'
+  const [attempts, setAttempts] = useState(0)
+  const [isLocked, setIsLocked] = useState(false)
+  const [lockTime, setLockTime] = useState(0)
   
   const router = useRouter()
+const validateInputs = () => {
+  if (isLocked) {
+    const remainingTime = Math.ceil((lockTime - Date.now()) / 1000 / 60)
+    setError(`Demasiados intentos. Intenta nuevamente en ${remainingTime} minutos.`)
+    return false
+  }
+  
+  if (formData.username.trim().length < 3) {
+    setError('El usuario debe tener al menos 3 caracteres');
+    return false;
+  }
+  
+  if (formData.password.length < 8) {
+    setError('La contraseña debe tener al menos 8 caracteres');
+    return false;
+  }
+  
+  const usernameRegex = /^[a-zA-Z0-9_-]+$/;
+  if (!usernameRegex.test(formData.username)) {
+    setError('El usuario solo puede contener letras, números, guiones y guiones bajos');
+    return false;
+  }
+  
+  if (formData.password.length > 100) {
+    setError('La contraseña es demasiado larga');
+    return false;
+  }
+  
+  if (formData.username.includes(' ')) {
+    setError('El usuario no puede contener espacios');
+    return false;
+  }
+  
+  return true;
+}
 
   const handleChange = (e) => {
     setFormData({
@@ -27,6 +65,11 @@ export default function LoginPage() {
     e.preventDefault()
     setIsLoading(true)
     setError('')
+if (!validateInputs()) {
+    return; 
+  }
+  
+  setIsLoading(true)
 
     try {
       const endpoint = loginType === 'admin' ? '/api/auth/admin-login' : '/api/auth/login'
@@ -42,15 +85,27 @@ export default function LoginPage() {
       const data = await response.json()
 
       
-      if (response.ok) {
-  console.log('=== DEBUG FRONTEND LOGIN ===')
-  console.log('Respuesta completa:', data)
-  console.log('Usuario:', data.user)
-  console.log('Rol del usuario:', data.user.role)
+if (response.ok) {
+
+setAttempts(0)
+  setIsLocked(false)
+  setLockTime(0)
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Login exitoso')
+    console.log('Rol del usuario:', data.user.role) // Solo información no sensible
+  }
   
-  // Guardar token en localStorage
-  localStorage.setItem('token', data.access_token)
-  localStorage.setItem('user', JSON.stringify(data.user))
+  sessionStorage.setItem('token', data.access_token)
+
+const safeUserData = {
+  id: data.user.id,
+  username: data.user.username,
+  role: data.user.role
+
+  // NO incluir: password, email, datos personales
+}
+sessionStorage.setItem('user', JSON.stringify(safeUserData))
   
   // Redirigir según el rol
   if (data.user.role === 'admin') {
@@ -61,7 +116,24 @@ export default function LoginPage() {
     router.push('/dashboard')
   }
 } else {
-  console.log('Error en respuesta:', data)
+ if (process.env.NODE_ENV === 'development') {
+    console.log('Error en login:', data.error)
+  }
+
+const newAttempts = attempts + 1
+  setAttempts(newAttempts)
+  
+  if (newAttempts >= 5) {
+    const lockDuration = 5 * 60 * 1000 
+    setIsLocked(true)
+    setLockTime(Date.now() + lockDuration)
+    
+    setTimeout(() => {
+      setIsLocked(false)
+      setAttempts(0)
+      setLockTime(0)
+    }, lockDuration)
+  }
   setError(data.error || 'Error al iniciar sesión')
 }
 
