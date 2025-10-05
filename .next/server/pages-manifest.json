@@ -2,7 +2,12 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
+  "/": "pages/index.js",
   "/login": "pages/login.js",
+  "/api/auth/login": "pages/api/auth/login.js",
+  "/api/auth/admin-login": "pages/api/auth/admin-login.js",
   "/admin/dashboard": "pages/admin/dashboard.js",
-  "/dashboard": "pages/dashboard.js"
+  "/api/admin/profesores": "pages/api/admin/profesores.js",
+  "/api/admin/administradores": "pages/api/admin/administradores.js",
+  "/api/admin/profesores/[id]": "pages/api/admin/profesores/[id].js"
 }

@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
-
-import '../src/index.css'
+import '../styles/globals.css'
 import { useEffect, useState } from 'react'
 
 export default function App({ Component, pageProps }) {
