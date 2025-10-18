@@ -21,14 +21,14 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Username y password son requeridos' })
     }
 
-    // Conectar directamente a MongoDB
+    
     const client = new MongoClient(MONGODB_URI)
     await client.connect()
     
-    // 👇 Conectarse a la DB correcta
+    
     const db = client.db('profesores')
     
-    // Listar todas las colecciones de la DB "profesores"
+    // Listar 
     const collections = await db.listCollections().toArray()
     console.log('Colecciones disponibles en "profesores":', collections.map(c => c.name))
     
@@ -59,7 +59,7 @@ export default async function handler(req, res) {
     console.log('Password hash en DB:', admin.password_hash)
     console.log('Rol en DB:', admin.role || admin.rol || 'NO DEFINIDO')
 
-    // Verificar password
+    // Verificar contra
     const isValidPassword = await bcrypt.compare(password, admin.password_hash)
     console.log('Password válido:', isValidPassword)
     

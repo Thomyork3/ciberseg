@@ -10,52 +10,27 @@ export default async function handler(req, res) {
       username, 
       password, 
       nombre_completo,
-      genero,
-      rfc,
-      curp,
-      categoria,
-      grado_academico,
-      antig_carrera,
-      antig_unam,
-      correo,
-      tel_casa,
-      celular,
-      direccion
+      correo
     } = req.body
 
+    // campos requeridos
     if (!username || !password || !nombre_completo || !correo) {
       return res.status(400).json({ error: 'Username, password, nombre completo y correo son requeridos' })
     }
 
-    // Verificar si el profesor ya existe por username
+    
     const existingProfesor = await Profesor.findByUsername(username)
     if (existingProfesor) {
       return res.status(400).json({ error: 'El profesor ya existe' })
     }
 
-    // Verificar si ya existe un profesor con el mismo correo
+    
     const existingEmail = await Profesor.findByEmail(correo)
     if (existingEmail) {
       return res.status(400).json({ error: 'Ya existe un profesor con este correo' })
     }
 
-    // Verificar RFC si se proporciona
-    if (rfc) {
-      const existingRFC = await Profesor.findByRFC(rfc)
-      if (existingRFC) {
-        return res.status(400).json({ error: 'Ya existe un profesor con este RFC' })
-      }
-    }
-
-    // Verificar CURP si se proporciona
-    if (curp) {
-      const existingCURP = await Profesor.findByCURP(curp)
-      if (existingCURP) {
-        return res.status(400).json({ error: 'Ya existe un profesor con este CURP' })
-      }
-    }
-
-    // Hashear password
+    
     const hashedPassword = await Profesor.hashPassword(password)
 
     // Crear profesor
@@ -63,17 +38,7 @@ export default async function handler(req, res) {
       username,
       password_hash: hashedPassword,
       nombre_completo,
-      genero,
-      rfc,
-      curp,
-      categoria,
-      grado_academico,
-      antig_carrera,
-      antig_unam,
-      correo,
-      tel_casa,
-      celular,
-      direccion
+      correo
     })
 
     const result = await profesor.save()
@@ -83,8 +48,8 @@ export default async function handler(req, res) {
       profesorId: result.insertedId.toString()
     })
 
-  } catch {
-    console.error('Error en registro:')
+  } catch (error) {
+    console.error('Error en registro:', error)
     res.status(500).json({ error: 'Error interno del servidor' })
   }
 }
